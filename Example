@@ -1,43 +1,43 @@
 [
     { 
-        t: '<Start with "a" and Second characters is\`nt "r">',
-        s: ['applet', 'assume', 'aside', 'arson', 'busted', 'coast'],
-        r: '^a[^r]\\w+$',
-        f: 'gm'
+        "t": "<Start with \"a\" and Second characters is'nt \"r\">",
+        "s": ["applet", "assume", "aside", "arson", "busted", "coast"],
+        "r": "^a[^r]\\w+$",
+        "f": "gm"
     },
      
     {
-        t: '<2 or 3 digits Number.>', 
-        s: [123, 456, 78, 90, 1, 2345],
-        r: '^\\d{2,3}$',
-        f: 'gm'
+        "t": "<2 or 3 digits Number.>", 
+        "s": [123, 456, 78, 90, 1, 2345],
+        "r": "^\\d{2,3}$",
+        "f": "gm"
     },
      
     {
-        t: '<When files found>',
-        s: ['1 file found', '5 files found', '15 files found', '330 files found', 'No files found'],
-        r: '\\d+ files? found',
-        f: 'g'        
+        "t": "<When files found>",
+        "s": ["1 file found", "5 files found", "15 files found", "330 files found", "No files found"],
+        "r": "\\d+ files? found",
+        "f": "g"  
     },
      
     {
-        t: '<Decimal Number>',
-        s: [5.129, -84.55, 518, 7.8e6, 43, 920.0, '240p', 'string'],
-        r: '^-?\\d+(,\\d+)*(\\.\\d+(e\\d+)?)?$',
-        f: 'gm'
+        "t": "<Decimal Number>",
+        "s": [5.129, -84.55, 518, 7.8e6, 43, 920.0, "240p", "string"],
+        "r": "^-?\\d+(,\\d+)*(\\.\\d+(e\\d+)?)?$",
+        "f": "gm"
     },
      
     {
-        t: '<Picture File>',
-        s: ['myPic.jpg', 'Summer.gif', 'Cool.png', 'myDoc.xls', 'ToDoList.txt', 'Macro.ahk'],
-        r: '(\\w+)\\.(jpg|png|gif)$',
-        f: 'gm'
+        "t": "<Picture File>",
+        "s": ["myPic.jpg", "Summer.gif", "Cool.png", "myDoc.xls", "ToDoList.txt", "Macro.ahk"],
+        "r": "(\\w+)\\.(jpg|png|gif)$",
+        "f": "gm"
     },
          
     {
-        t: '<Food>',
-        s: ['📷', '📀', '🍔', '🎄', '💻', '🍕', '⚽', '🍟', '🚒'],
-        r: '[🍔🍟🍕]+',
-        f: 'gu'  
+        "t": "<Food>",
+        "s": ["📷", "📀", "🍔", "🎄", "💻", "🍕", "⚽", "🍟", "🚒"],
+        "r": "[🍔🍟🍕]+",
+        "f": "gu"
     }
-];
+]
