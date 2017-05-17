@@ -1,6 +1,6 @@
 [
     { 
-        "t": "<Start with \"a\" and Second characters is'nt \"r\">",
+        "t": "<Start with \"a\" and Second characters isn't \"r\">",
         "s": ["applet", "assume", "aside", "arson", "busted", "coast"],
         "r": "^a[^r]\\w+$",
         "f": "gm"
