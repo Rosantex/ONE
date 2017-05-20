@@ -1,5 +1,6 @@
 
-var isMobile = 0; //Number(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+var isMobile = +($("#mobile").html() == "true"); // mobile → 1, Tablet/PC → 0
+//Number(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
 $(document).off('paste');
 
@@ -14,8 +15,8 @@ $('#ReplayDiag .dialog-body')
     .html("<input type='image' id='BgImg' src='https://s-media-cache-ak0.pinimg.com/originals/c5/cb/45/c5cb45eccf4d1cbd58d63ea274ceb825.jpg' /><input type='text' id='Setkey' value='keydown here' /><input type='button' id='SetHotkey' value='OK' /><input type='button' id='Autoplay' value='Auto' />")
     .css({ position: 'relative' });
 
-$("#ReplayDiag .dialog-title")
-    .html('AlphaKKU Ver 1.999')
+$('#ReplayDiag .dialog-title')
+    .html('AlphaKKU Ver 1.9999')
     .css({ 
         color: 'white', 
      	fontSize: 12, 
@@ -70,21 +71,16 @@ $('#DictionaryBtn')
     .on('click', function() { $("#ReplayBtn").click(); })
     .click();
  
-$('.jjo-display').attr('id', 'ROS_Display');
-$('.game-input').attr('id', 'ROS_Turn');
 $('.jjo-turn-time').attr('id', 'ROS_Time');
-$('.GameBox .items').attr('id', 'ROS_Item');
-$('.rounds').attr('id', 'ROS_Round');
-$('.history').attr('id', 'ROS_History');
  
-var $dsp = isMobile && $('div.jjo-display') || $('#ROS_Display'),
-    $talk = isMobile && $('#game-input') || $('#Talk'),
+var $dsp = isMobile ? $('div.jjo-display') : $('.jjo-display'),
+    $talk = isMobile ? $('#game-input') : $('#Talk'),
     $take = $('#ChatBtn'),
-    $turn = $('#ROS_Turn'),
+    $turn = $('.game-input'),
     $time = document.getElementById('ROS_Time'),
-    $item = $('#ROS_Item'),
-    $round = $('#ROS_Round'),
-    $history = $('#ROS_History'),
+    $item = $('.GameBox .items'),
+    $round = $('.rounds'),
+    $history = $('.history'),
     $myimg = $('#BgImg'),
     $setkey = $('#Setkey'),
     $sethotkey = $('#SetHotkey'),
@@ -94,7 +90,7 @@ var ko, en, db,
     mode, 
     opts,
     key, 
-    hotkey = isMobile ? 18 : 18,
+    hotkey = isMobile ? 13 : 18,
     f, pf, m,
     _Found, _LFound,
     setlock = false,
@@ -221,11 +217,11 @@ var PLAY = {
     'KSH': function() {
         f = $dsp.text();
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;		
-        _Found = opts.includes('미션') && ( m = $item.text() ) ? db.match('\\[' + f + '(.*' + m + '.*)+[^다]\\]') : '';		
-        if (_Found) while (_Found = db.match('\\[' + f + '(.*' + m + '.*){' + (_LFound = _Found[0]).split(m).length + ',}[^다]\\]'));
-        else  _LFound = (db.match('\\[(' + f + '.*[^다])\\]') || '')[0];
+        _Found = opts.includes('미션') && (m = $item.text()) ? db.match(`\\[${f}(.*${m}.*)+[^다]\\]`) : '';		
+        if (_Found) while (_Found = db.match(`\\[${f}(.*${m}.*){` + (_LFound = _Found[0]).split(m).length + ',}[^다]\\]'));
+        else  _LFound = (db.match(`\\[(${f}.*[^다])\\]`) || '')[0];
        
-        (_Found = _LFound) && transmit(_Found.slice(1, -1), _Found, true);
+        if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
     'KKT': function() {
@@ -233,22 +229,22 @@ var PLAY = {
         f = $dsp.text();
         f = f.replace((d = f.match(/\((\d)\)/))[0], '');    
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;
-        _Found = (db.match('\\[' + f + '.{' + (Number(d[1]) - 2).toString() + '}[^다]\\]') || '')[0];
-        _Found && transmit(_Found.slice(1, -1), _Found, true);
+        _Found = (db.match(`\\[${f}.{` + (+d[1] - 2).toString() + '}[^다]\\]') || '')[0];
+        if (_Found) transmit(_Found.slice(1, -1), _Found, true);
     },
     
     'KAP': function() {
         f = $dsp.text();
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;
-        _Found = opts.includes('미션') && ( m = $item.text() ) ? db.match('\\[(.*' + m + '.*)+' + f + '\\]') : '';	
-        if (_Found)  while (_Found = db.match('\\[(.*' + m  + '.*){' + (_LFound = _Found[0]).split(m).length + ',}' + f + '\\]'));
-        else _LFound = (db.match('\\[(.+' + f + ')\\]') || '')[0];
+        _Found = opts.includes('미션') && (m = $item.text()) ? db.match(`\\[(.*${m}.*)+${f}\\]`) : '';	
+        if (_Found)  while (_Found = db.match(`\\[(.*${m}.*){` + (_LFound = _Found[0]).split(m).length + `,}${f}\\]`));
+        else _LFound = (db.match(`\\[(.+${f})\\]`) || '')[0];
   	
-        (_Found = _LFound) && transmit(_Found.slice(1, -1), _Found, true);
+        if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
     'KTY': function() { 
-        transmit(opts.includes('속담') ? $dsp.text() : $dsp.text().split(' ')[0], false, false); 
+        transmit(opts.includes('속담') ? $dsp.text() : /\S+/.exec($dsp.text()), false, false); 
     },
     
     'KDA': function() { 
@@ -261,15 +257,15 @@ var PLAY = {
     
     'KSS': function() {
         var res = $dsp.html().match(/%;">[가-힣](?=<\/div>)/g).join('').replace(/[^가-힣]/g,'');
-        var d, len = 0, chr = '', have = '', rSock = [];
+        var d = 2, len = 0, chr = '', have = '', rSock = [];
         while (len = res.length) {
             res = res.replace(new RegExp(chr = res[0], 'g'), '');
-            rSock.push('\\[(.*' + chr + '.*){' + (len - res.length + 1) + ',}\\]');
+            rSock.push(`\\[(.*${chr}.*){${len - res.length + 1},}\\]`);
 	    have += chr;
         }		
-        var rSock2 = new RegExp('\\[[' + have + ']{' + (d = opts.includes('2글자 금지') ? 3 : 2) + ',}\\]', 'g');
-        var _Found = ((db.match(rSock2) || []).join('\n').replace(new RegExp(rSock.join('|'), 'g'), '').match('\\[[' + have + ']{' + d + ',}\\]') || '')[0];
-        _Found && transmit(_Found.slice(1, -1), _Found, false);	
+        var rSock2 = new RegExp(`\\[[${have}]{` + (d = opts.includes('2글자 금지') ? 3 : 2) + ',}\\]', 'g');
+        var _Found = ((db.match(rSock2) || []).join('\n').replace(new RegExp(rSock.join('|'), 'g'), '').match(`\\[[${have}]{${d},}\\]`) || '')[0];
+        if (_Found) transmit(_Found.slice(1, -1), _Found, false);	
     },
     
     'CSQ': function() { 
@@ -283,31 +279,31 @@ var PLAY = {
             var a = ($1.charCodeAt(0) - 4352) * 588 + 44032; 
 	    return '[' + String.fromCharCode(a) + '-' + String.fromCharCode(587 + a) + ']';
         });	
-        (_Found = (db.match('\\[' + res + '\\]') || '')[0]) && transmit(_Found.slice(1, -1), _Found, true);	
+        if (_Found = (db.match(`\\[${res}\\]`) || '')[0]) transmit(_Found.slice(1, -1), _Found, true);	
     },
     
     'ESH': function() {        
         f = $dsp.text();
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;		
-        _Found = opts.includes('미션') && ( m = $item.text() ) ? db.match('\\[' + f + '(.*' + m + '.*)+\\]') : '';		
-        if (_Found) while (_Found = db.match('\\[' + f + '(.*' + m + '.*){' + (_LFound = _Found[0]).split(m).length + ',}\\]'));
-        else  _LFound = (db.match('\\[(' + f + '.+)\\]') || '')[0];
+        _Found = opts.includes('미션') && (m = $item.text()) ? db.match(`\\[${f}(.*${m}.*)+\\]`) : '';		
+        if (_Found) while (_Found = db.match(`\\[${f}(.*${m}.*){` + (_LFound = _Found[0]).split(m).length + ',}\\]'));
+        else  _LFound = (db.match(`\\[(${f}.+)\\]`) || '')[0];
        
-        (_Found = _LFound) && transmit(_Found.slice(1, -1), _Found, true);
+        if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
     'EKT': function() {
         f = $dsp.text();
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;
-        _Found = opts.includes('미션') && ( m = $item.text() ) ? db.match('\\[' + f + '(.*' + m + '.*)+\\]') : '';
-        if (_Found)  while (_Found = db.match('\\[' + f + '(.*' + m + '.*){' + (_LFound = _Found[0]).split(m).length + ',}\\]'));
+        _Found = opts.includes('미션') && (m = $item.text()) ? db.match(`\\['${f}(.*${m}.*)+\\]`) : '';
+        if (_Found)  while (_Found = db.match(`\\[${f}(.*${m}.*){` + (_LFound = _Found[0]).split(m).length + ',}\\]'));
         else _LFound = (db.match('\\[(' + f + '.+)\\]') || '')[0];
         	
-        (_Found = _LFound) && transmit(_Found.slice(1, -1), _Found, true);
+        if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
     'ETY': function() { 
-        transmit(opts.includes('속담') ? $dsp.text() : $dsp.text().split(' ')[0], false, false); 
+        transmit(opts.includes('속담') ? $dsp.text() : /\S+/.exec($dsp.text()), false, false); 
     },
     
     'EDA': function() { 
@@ -319,26 +315,26 @@ var PLAY = {
         var len = 0, chr = '', have = '', rSock = [];
         while (len = res.length) {
             res = res.replace(new RegExp(chr = res[0], 'g'), '');
-            rSock.push('\\[(.*' + chr + '.*){' + (len - res.length + 1) + ',}\\]');
+            rSock.push(`\\[(.*${chr}.*){${len - res.length + 1},}\\]`);
 	    have += chr;
         }
         rSock.unshift('\\[[' + have + ']*([^' + have + '][' + have + '?]) + \\]');
-        var _Found = (db.replace(new RegExp(rSock.join('|'), 'g'), '').match('\\[[' + have + ']{' + (opts.includes('2글자 금지') ? 3 : 2) + ',}\\]') || '')[0];
-        _Found && transmit(_Found.slice(1, -1), _Found, false);
+        var _Found = (db.replace(new RegExp(rSock.join('|'), 'g'), '').match(`\\[[${have}]{` + (opts.includes('2글자 금지') ? 3 : 2) + ',}\\]') || '')[0];
+        if (_Found) transmit(_Found.slice(1, -1), _Found, false);
     }
     
 };
 
 $round.on('DOMSubtreeModified', function() {
-    if (new Date().getTime() - lastupdate < 5555) return false; 
+    if (+new Date() - lastupdate < 5555) return; 
 
     opts = $('h5.room-head-mode').html().split(' / ');
-    if (!opts) return false;
+    if (!opts) return;
     
     mode = GAMEMODE[opts.splice(0, 1)];
     db = /E../.test(mode) ? (en || (en = readUrl('En'))) : (ko || (ko = readUrl('Ko.txt')));
     console.log('[New Game]\nmode: ' + mode + '\nopts: ' + opts + '\n  ');
-    lastupdate = new Date().getTime();
+    lastupdate = +new Date();
     playing = false;
     changeImage();
 });
@@ -358,24 +354,24 @@ $autoplay.on({
 });
 
 $history.on('DOMSubtreeModified',  function() {
-     if (new Date().getTime() - lasthistory < 150) return false;
+     if (+new Date() - lasthistory < 150) return;
 
      var stuff, trash;
      if (!(stuff = $(this).html()) || word_history.includes(trash = stuff.split('<')[1].split('>')[1])) {
-          lasthistory = new Date().getTime();
+          lasthistory = +new Date();
           return false;
      }
      console.log('fire - history');
      word_history.push(trash);
-     db = db.replace('[' + trash + ']', '');
-     lasthistory = new Date().getTime();
+     db = db.replace(`[${trash}]`, '');
+     lasthistory = +new Date();
 });
 
 $setkey.on({ 
     keydown: function(e) {
         e.stopPropagation();
         e.preventDefault();
-        if (setlock) return false; 
+        if (setlock) return;
 
 	key = e.keyCode;
         $setkey.val(KEYNAME[key] || String.fromCharCode(key));
@@ -390,7 +386,7 @@ $setkey.on({
 
 $sethotkey.on({
     click: function() {
-        if (setlock) return false;
+        if (setlock) return;
 
         hotkey = key;
         $setkey.css({ background: 'Pink' });
@@ -440,7 +436,7 @@ function transmit(msg, erase, memo) {
 
 function sleep(delay) { 
     var start = new Date().getTime(); 
-    while ( new Date().getTime() < start + delay ); 
+    while (new Date().getTime() < start + delay); 
 }
 
 function changeImage() { 
@@ -461,10 +457,9 @@ function shuffle(deck) {
     return wasArray ? arr : arr.join('\n');
 }
 
-function readUrl(Url) { 
+function readUrl(url) { 
     return $.ajax({ 
-        type: "GET", 
-	url: 'https://raw.githubusercontent.com/Rosantex/my/master/' + Url, 
+	url: `https://raw.githubusercontent.com/Rosantex/my/master/${url}`, 
 	async: false
     }).responseText;
 }
