@@ -359,7 +359,7 @@ $history.on('DOMSubtreeModified',  function() {
      var stuff, trash;
      if (!(stuff = $(this).html()) || word_history.includes(trash = stuff.split('<')[1].split('>')[1])) {
           lasthistory = +new Date();
-          return false;
+          return;
      }
      console.log('fire - history');
      word_history.push(trash);
@@ -404,9 +404,9 @@ $sethotkey.on({
 $(window).on('keydown', function(e) {
     if (e.keyCode === hotkey && ($turn.is(':visible') || /(K|E)SS/.test(mode))) {
         e.preventDefault();
-        var start = new Date().getTime();
+        var start = +new Date();
         PLAY[mode]();
-        console.log(new Date().getTime() - start);
+        console.log(+new Date() - start);
     }
 });
 
@@ -415,7 +415,7 @@ function control_AI(plug) {
 }
 
 function execute_AI(mutation) {
-     if ($turn.is(":visible")) {
+     if ($turn.is(':visible')) {
           control_AI(false);
           console.log('mutate');
           PLAY[mode]();
@@ -429,14 +429,14 @@ function transmit(msg, erase, memo) {
     if ($turn.is(":visible") || /(K|E)SS/.test(mode)) {
         $talk.val(msg);
 	$take.click();
-	erase && (db = db.replace(erase, ''));
-	memo && (pf = f);
+        if (erase) db = db.replace(erase, '');
+        if(memo) pf = f;
     }
 }
 
 function sleep(delay) { 
-    var start = new Date().getTime(); 
-    while (new Date().getTime() < start + delay); 
+    var start = +new Date(); 
+    while (+new Date() < start + delay); 
 }
 
 function changeImage() { 
