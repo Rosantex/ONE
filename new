@@ -214,7 +214,7 @@ const GAMEMODE = {
 
 var PLAY = {
 
-    'KSH': function() {
+    'KSH': () => {
         f = $dsp.text();
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;		
         _Found = opts.includes('미션') && (m = $item.text()) ? db.match(`\\[${f}(.*${m}.*)+[^다]\\]`) : '';		
@@ -224,7 +224,7 @@ var PLAY = {
         if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
-    'KKT': function() {
+    'KKT': () => {
         var d;
         f = $dsp.text();
         f = f.replace((d = f.match(/\((\d)\)/))[0], '');    
@@ -233,7 +233,7 @@ var PLAY = {
         if (_Found) transmit(_Found.slice(1, -1), _Found, true);
     },
     
-    'KAP': function() {
+    'KAP': () => {
         f = $dsp.text();
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;
         _Found = opts.includes('미션') && (m = $item.text()) ? db.match(`\\[(.*${m}.*)+${f}\\]`) : '';	
@@ -243,19 +243,19 @@ var PLAY = {
         if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
-    'KTY': function() { 
+    'KTY': ()=> { 
         transmit(opts.includes('속담') ? $dsp.text() : /\S+/.exec($dsp.text()), false, false); 
     },
     
-    'KDA': function() { 
+    'KDA': () => { 
         console.log('한단-준비중'); 
     },
     
-    'KCW': function() { 
+    'KCW': () => { 
         console.log('십자-준비중'); 
     },
     
-    'KSS': function() {
+    'KSS': () => {
         var res = $dsp.html().match(/%;">[가-힣](?=<\/div>)/g).join('').replace(/[^가-힣]/g,'');
         var d = 2, len = 0, chr = '', have = '', rSock = [];
         while (len = res.length) {
@@ -268,11 +268,11 @@ var PLAY = {
         if (_Found) transmit(_Found.slice(1, -1), _Found, false);	
     },
     
-    'CSQ': function() { 
+    'CSQ': () => { 
         console.log('자퀴-준비중'); 
     },
     
-    'HUN': function() {
+    'HUN': () => {
         f = $dsp.text().slice(1, -1);	
         f = f.includes(':') ? pf : f; 
         var res = f.replace(/([\u1100-\u1112])/g, function($1) { 
@@ -282,7 +282,7 @@ var PLAY = {
         if (_Found = (db.match(`\\[${res}\\]`) || '')[0]) transmit(_Found.slice(1, -1), _Found, true);	
     },
     
-    'ESH': function() {        
+    'ESH': () => {        
         f = $dsp.text();
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;		
         _Found = opts.includes('미션') && (m = $item.text()) ? db.match(`\\[${f}(.*${m}.*)+\\]`) : '';		
@@ -292,7 +292,7 @@ var PLAY = {
         if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
-    'EKT': function() {
+    'EKT': () => {
         f = $dsp.text();
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;
         _Found = opts.includes('미션') && (m = $item.text()) ? db.match(`\\['${f}(.*${m}.*)+\\]`) : '';
@@ -302,15 +302,15 @@ var PLAY = {
         if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
-    'ETY': function() { 
+    'ETY': () => { 
         transmit(opts.includes('속담') ? $dsp.text() : /\S+/.exec($dsp.text()), false, false); 
     },
     
-    'EDA': function() { 
+    'EDA': () => { 
         console.log('영단-준비중'); 
     },
     
-    'ESS': function() {
+    'ESS': () => {
         var res = $dsp.html().match(/%;">\w(?=<\/div>)/g).join('').replace(/[^a-z]/g,'');
         var len = 0, chr = '', have = '', rSock = [];
         while (len = res.length) {
@@ -325,7 +325,7 @@ var PLAY = {
     
 };
 
-$round.on('DOMSubtreeModified', function() {
+$round.on('DOMSubtreeModified', () => {
     if (+new Date() - lastupdate < 5555) return; 
 
     opts = $('h5.room-head-mode').html().split(' / ');
@@ -340,20 +340,20 @@ $round.on('DOMSubtreeModified', function() {
 });
 
 $autoplay.on({
-    click: function() { 
+    click: () => { 
         control_AI(automode = !automode);
         $autoplay.css({ background: automode ? 'RoyalBlue' : 'LimeGreen' });
         console.log('AutoMode: ' + automode);
     },
-    mouseover: function() { 
+    mouseover: () => { 
         $(this).css({ color: 'Red' }); 
     },
-    mouseout: function() { 
+    mouseout: () => { 
         $(this).css({ color: '' }); 
     }
 });
 
-$history.on('DOMSubtreeModified',  function() {
+$history.on('DOMSubtreeModified',  () => {
      if (+new Date() - lasthistory < 150) return;
 
      var stuff, trash;
@@ -385,7 +385,7 @@ $setkey.on({
 });
 
 $sethotkey.on({
-    click: function() {
+    click: () => {
         if (setlock) return;
 
         hotkey = key;
@@ -393,10 +393,10 @@ $sethotkey.on({
         setlock = true;
         console.log('Hotkey Modified: ' + (KEYNAME[key] || String.fromCharCode(key)));
     },
-    mouseover: function() { 
+    mouseover: () => { 
         $(this).css({ color: 'Red' }); 
     },
-    mouseout: function() { 
+    mouseout: () => { 
         $(this).css({ color: '' }); 
     }
 });
@@ -410,7 +410,7 @@ $(window).on('keydown', function(e) {
     }
 });
 
-function control_AI(plug) {
+let control_AI = plug => {
     plug ? observer.observe($time, config) : observer.disconnect();
 }
 
@@ -426,25 +426,25 @@ function execute_AI(mutation) {
 }
 
 function transmit(msg, erase, memo) {
-    if ($turn.is(":visible") || /(K|E)SS/.test(mode)) {
+    if ($turn.is(':visible') || /(K|E)SS/.test(mode)) {
         $talk.val(msg);
 	$take.click();
         if (erase) db = db.replace(erase, '');
-        if(memo) pf = f;
+        if (memo) pf = f;
     }
 }
 
-function sleep(delay) { 
+let sleep = delay => { 
     var start = +new Date(); 
     while (+new Date() < start + delay); 
 }
 
-function changeImage() { 
+let changeImage = () => { 
     var tempsrc = Math.floor(Math.random() * IMG.length); 
     $myimg.attr('src', tempsrc === IMG.indexOf($myimg.attr('src')) ? changeImage() : IMG[tempsrc]); 
 }
 
-function shuffle(deck) {
+let shuffle = deck => {
     var wasArray = Array.isArray(deck);
     var arr = wasArray ? deck : deck.split('\n');
     var curindex = arr.length, tempvalue, rndindex;
