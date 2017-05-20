@@ -1,5 +1,5 @@
 
-var isMobile = +($("#mobile").html() == "true"); // mobile → 1, Tablet/PC → 0
+let isMobile = +($("#mobile").html() == "true"); // mobile → 1, Tablet/PC → 0
 //Number(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
 $(document).off('paste');
@@ -73,7 +73,7 @@ $('#DictionaryBtn')
  
 $('.jjo-turn-time').attr('id', 'ROS_Time');
  
-var $dsp = isMobile ? $('div.jjo-display') : $('.jjo-display'),
+let $dsp = isMobile ? $('div.jjo-display') : $('.jjo-display'),
     $talk = isMobile ? $('#game-input') : $('#Talk'),
     $take = $('#ChatBtn'),
     $turn = $('.game-input'),
@@ -86,7 +86,7 @@ var $dsp = isMobile ? $('div.jjo-display') : $('.jjo-display'),
     $sethotkey = $('#SetHotkey'),
     $autoplay = $('#Autoplay');
     
-var ko, en, db,
+let ko, en, db,
     mode, 
     opts,
     key, 
@@ -98,10 +98,13 @@ var ko, en, db,
     automode = false,
     word_history = [];
     
-var observer = new WebKitMutationObserver(function(mutations) {
+let control_AI, transmit, changeImage, sleep, shuffle, readUrl;
+    
+let observer = new WebKitMutationObserver(function(mutations) {
           mutations.forEach(execute_AI);
     });
-var config = { attributes: false, childList: true, subtree: true };
+    
+let config = { attributes: false, childList: true, subtree: true };
     
 const KEYNAME = { 
 
@@ -212,7 +215,7 @@ const GAMEMODE = {
 
 };
 
-var PLAY = {
+let PLAY = {
 
     'KSH': () => {
         f = $dsp.text();
@@ -393,12 +396,8 @@ $sethotkey.on({
         setlock = true;
         console.log('Hotkey Modified: ' + (KEYNAME[key] || String.fromCharCode(key)));
     },
-    mouseover: () => { 
-        $(this).css({ color: 'Red' }); 
-    },
-    mouseout: () => { 
-        $(this).css({ color: '' }); 
-    }
+    mouseover: () => $(this).css({ color: 'Red' }),
+    mouseout: () => $(this).css({ color: '' })
 });
 
 $(window).on('keydown', function(e) {
@@ -410,9 +409,9 @@ $(window).on('keydown', function(e) {
     }
 });
 
-let control_AI = plug => {
+control_AI = plug => {
     plug ? observer.observe($time, config) : observer.disconnect();
-}
+};
 
 function execute_AI(mutation) {
      if ($turn.is(':visible')) {
@@ -425,26 +424,26 @@ function execute_AI(mutation) {
      }
 }
 
-function transmit(msg, erase, memo) {
+transmit = (msg, erase, memo) => {
     if ($turn.is(':visible') || /(K|E)SS/.test(mode)) {
         $talk.val(msg);
 	$take.click();
         if (erase) db = db.replace(erase, '');
         if (memo) pf = f;
     }
-}
+};
 
-let sleep = delay => { 
+sleep = delay => { 
     var start = +new Date(); 
     while (+new Date() < start + delay); 
-}
+};
 
-let changeImage = () => { 
+changeImage = () => { 
     var tempsrc = Math.floor(Math.random() * IMG.length); 
     $myimg.attr('src', tempsrc === IMG.indexOf($myimg.attr('src')) ? changeImage() : IMG[tempsrc]); 
-}
+};
 
-let shuffle = deck => {
+shuffle = deck => {
     var wasArray = Array.isArray(deck);
     var arr = wasArray ? deck : deck.split('\n');
     var curindex = arr.length, tempvalue, rndindex;
@@ -455,13 +454,13 @@ let shuffle = deck => {
         arr[rndindex] = tempvalue;
     }
     return wasArray ? arr : arr.join('\n');
-}
+};
 
-function readUrl(url) { 
+readUrl = url => { 
     return $.ajax({ 
 	url: `https://raw.githubusercontent.com/Rosantex/my/master/${url}`, 
 	async: false
     }).responseText;
-}
+};
 
     
