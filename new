@@ -1,5 +1,5 @@
 
-let isMobile = +($("#mobile").html() == "true"); // mobile → 1, Tablet/PC → 0
+let isMobile = $("#mobile").html() == 'true'; // mobile → 1, Tablet/PC → 0
 //Number(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
 $(document).off('paste');
@@ -44,7 +44,7 @@ $('#SetHotkey').css({
     top: 0, 
     left: 140, 
     position:'absolute', 
-    background: 'skyblue', 
+    background: 'SkyBlue', 
     WebkitUserSelect: 'none' 
 });
 
@@ -94,11 +94,13 @@ let ko, en, db,
     f, pf, m,
     _Found, _LFound,
     setlock = false,
-    lastupdate = 0, lasthistory = 0, lastplay = 0,
+    lastupdate = 0, 
+    lasthistory = 0, 
+    lastplay = 0,
     automode = false,
     word_history = [];
     
-let control_AI, transmit, changeImage, sleep, shuffle, readUrl;
+let control_AI, execute_AI, transmit, changeImage, sleep, shuffle, readUrl;
     
 let observer = new WebKitMutationObserver(function(mutations) {
           mutations.forEach(execute_AI);
@@ -228,7 +230,7 @@ let PLAY = {
     },
     
     'KKT': () => {
-        var d;
+        let d;
         f = $dsp.text();
         f = f.replace((d = f.match(/\((\d)\)/))[0], '');    
         f = f.includes('(') ? '(' + f.replace('(', '|') : f.includes(':') ? pf : f;
@@ -246,40 +248,32 @@ let PLAY = {
         if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
-    'KTY': ()=> { 
-        transmit(opts.includes('속담') ? $dsp.text() : /\S+/.exec($dsp.text()), false, false); 
-    },
+    'KTY': ()=> transmit(opts.includes('속담') ? $dsp.text() : /\S+/.exec($dsp.text()), false, false),
     
-    'KDA': () => { 
-        console.log('한단-준비중'); 
-    },
+    'KDA': () => console.log('한단-준비중'),
     
-    'KCW': () => { 
-        console.log('십자-준비중'); 
-    },
+    'KCW': () => console.log('십자-준비중'),
     
     'KSS': () => {
-        var res = $dsp.html().match(/%;">[가-힣](?=<\/div>)/g).join('').replace(/[^가-힣]/g,'');
-        var d = 2, len = 0, chr = '', have = '', rSock = [];
+        let res = $dsp.html().match(/%;">[가-힣](?=<\/div>)/g).join('').replace(/[^가-힣]/g,'');
+        let d = 2, len = 0, chr = '', have = '', rSock = [];
         while (len = res.length) {
             res = res.replace(new RegExp(chr = res[0], 'g'), '');
             rSock.push(`\\[(.*${chr}.*){${len - res.length + 1},}\\]`);
 	    have += chr;
         }		
-        var rSock2 = new RegExp(`\\[[${have}]{` + (d = opts.includes('2글자 금지') ? 3 : 2) + ',}\\]', 'g');
-        var _Found = ((db.match(rSock2) || []).join('\n').replace(new RegExp(rSock.join('|'), 'g'), '').match(`\\[[${have}]{${d},}\\]`) || '')[0];
+        let rSock2 = new RegExp(`\\[[${have}]{` + (d = opts.includes('2글자 금지') ? 3 : 2) + ',}\\]', 'g');
+        let _Found = ((db.match(rSock2) || []).join('\n').replace(new RegExp(rSock.join('|'), 'g'), '').match(`\\[[${have}]{${d},}\\]`) || '')[0];
         if (_Found) transmit(_Found.slice(1, -1), _Found, false);	
     },
     
-    'CSQ': () => { 
-        console.log('자퀴-준비중'); 
-    },
+    'CSQ': () => console.log('자퀴-준비중'),
     
     'HUN': () => {
         f = $dsp.text().slice(1, -1);	
         f = f.includes(':') ? pf : f; 
-        var res = f.replace(/([\u1100-\u1112])/g, function($1) { 
-            var a = ($1.charCodeAt(0) - 4352) * 588 + 44032; 
+        let res = f.replace(/([\u1100-\u1112])/g, _ => { 
+            let a = (_.charCodeAt(0) - 4352) * 588 + 44032; 
 	    return '[' + String.fromCharCode(a) + '-' + String.fromCharCode(587 + a) + ']';
         });	
         if (_Found = (db.match(`\\[${res}\\]`) || '')[0]) transmit(_Found.slice(1, -1), _Found, true);	
@@ -305,24 +299,20 @@ let PLAY = {
         if (_Found = _LFound) transmit(_Found.slice(1, -1), _Found, true);
     },
     
-    'ETY': () => { 
-        transmit(opts.includes('속담') ? $dsp.text() : /\S+/.exec($dsp.text()), false, false); 
-    },
+    'ETY': () => transmit(opts.includes('속담') ? $dsp.text() : /\S+/.exec($dsp.text()), false, false),
     
-    'EDA': () => { 
-        console.log('영단-준비중'); 
-    },
+    'EDA': () => console.log('영단-준비중'),
     
     'ESS': () => {
-        var res = $dsp.html().match(/%;">\w(?=<\/div>)/g).join('').replace(/[^a-z]/g,'');
-        var len = 0, chr = '', have = '', rSock = [];
+        let res = $dsp.html().match(/%;">\w(?=<\/div>)/g).join('').replace(/[^a-z]/g,'');
+        let len = 0, chr = '', have = '', rSock = [];
         while (len = res.length) {
             res = res.replace(new RegExp(chr = res[0], 'g'), '');
             rSock.push(`\\[(.*${chr}.*){${len - res.length + 1},}\\]`);
 	    have += chr;
         }
         rSock.unshift('\\[[' + have + ']*([^' + have + '][' + have + '?]) + \\]');
-        var _Found = (db.replace(new RegExp(rSock.join('|'), 'g'), '').match(`\\[[${have}]{` + (opts.includes('2글자 금지') ? 3 : 2) + ',}\\]') || '')[0];
+        let _Found = (db.replace(new RegExp(rSock.join('|'), 'g'), '').match(`\\[[${have}]{` + (opts.includes('2글자 금지') ? 3 : 2) + ',}\\]') || '')[0];
         if (_Found) transmit(_Found.slice(1, -1), _Found, false);
     }
     
@@ -336,7 +326,7 @@ $round.on('DOMSubtreeModified', () => {
     
     mode = GAMEMODE[opts.splice(0, 1)];
     db = /E../.test(mode) ? (en || (en = readUrl('En'))) : (ko || (ko = readUrl('Ko.txt')));
-    console.log('[New Game]\nmode: ' + mode + '\nopts: ' + opts + '\n  ');
+    console.log(`[New Game]\nmode: ${mode}\nopts: ${opts} \n  `);
     lastupdate = +new Date();
     playing = false;
     changeImage();
@@ -346,20 +336,16 @@ $autoplay.on({
     click: () => { 
         control_AI(automode = !automode);
         $autoplay.css({ background: automode ? 'RoyalBlue' : 'LimeGreen' });
-        console.log('AutoMode: ' + automode);
+        console.log(`AutoMode: ${automode});
     },
-    mouseover: () => { 
-        $(this).css({ color: 'Red' }); 
-    },
-    mouseout: () => { 
-        $(this).css({ color: '' }); 
-    }
+    mouseover: () => $autoplay.css({ color: 'Red' }),
+    mouseout: () => $autoplay.css({ color: '' })
 });
 
-$history.on('DOMSubtreeModified',  () => {
+$history.on('DOMSubtreeModified',  function() {
      if (+new Date() - lasthistory < 150) return;
 
-     var stuff, trash;
+     let stuff, trash;
      if (!(stuff = $(this).html()) || word_history.includes(trash = stuff.split('<')[1].split('>')[1])) {
           lasthistory = +new Date();
           return;
@@ -377,7 +363,7 @@ $setkey.on({
         if (setlock) return;
 
 	key = e.keyCode;
-        $setkey.val(KEYNAME[key] || String.fromCharCode(key));
+        $(this).val(KEYNAME[key] || String.fromCharCode(key));
     },
     dblclick: function() { 
         if (setlock) { 
@@ -396,11 +382,11 @@ $sethotkey.on({
         setlock = true;
         console.log('Hotkey Modified: ' + (KEYNAME[key] || String.fromCharCode(key)));
     },
-    mouseover: () => $(this).css({ color: 'Red' }),
-    mouseout: () => $(this).css({ color: '' })
+    mouseover: () => $sethotkey.css({ color: 'Red' }),
+    mouseout: () => $sethotkey.css({ color: '' })
 });
 
-$(window).on('keydown', function(e) {
+$(window).on('keydown', e => {
     if (e.keyCode === hotkey && ($turn.is(':visible') || /(K|E)SS/.test(mode))) {
         e.preventDefault();
         var start = +new Date();
@@ -409,20 +395,16 @@ $(window).on('keydown', function(e) {
     }
 });
 
-control_AI = plug => {
-    plug ? observer.observe($time, config) : observer.disconnect();
-};
+control_AI = plug => plug ? observer.observe($time, config) : observer.disconnect();
 
-function execute_AI(mutation) {
+execute_AI = mutation => {
      if ($turn.is(':visible')) {
           control_AI(false);
           console.log('mutate');
           PLAY[mode]();
-	  setTimeout(function() { 
-               control_AI(true); 
-	  }, 100);
+	  setTimeout(() => control_AI, 100, true);
      }
-}
+};
 
 transmit = (msg, erase, memo) => {
     if ($turn.is(':visible') || /(K|E)SS/.test(mode)) {
@@ -434,19 +416,19 @@ transmit = (msg, erase, memo) => {
 };
 
 sleep = delay => { 
-    var start = +new Date(); 
+    let start = +new Date(); 
     while (+new Date() < start + delay); 
 };
 
 changeImage = () => { 
-    var tempsrc = Math.floor(Math.random() * IMG.length); 
+    let tempsrc = Math.floor(Math.random() * IMG.length); 
     $myimg.attr('src', tempsrc === IMG.indexOf($myimg.attr('src')) ? changeImage() : IMG[tempsrc]); 
 };
 
 shuffle = deck => {
-    var wasArray = Array.isArray(deck);
-    var arr = wasArray ? deck : deck.split('\n');
-    var curindex = arr.length, tempvalue, rndindex;
+    let wasArray = Array.isArray(deck);
+    let arr = wasArray ? deck : deck.split('\n');
+    let curindex = arr.length, tempvalue, rndindex;
     while (0 !== curindex) {
         rndindex = Math.floor(Math.random() * curindex);
         tempvalue = arr[--curindex];	
