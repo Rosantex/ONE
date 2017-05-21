@@ -336,7 +336,7 @@ $autoplay.on({
     click: () => { 
         control_AI(automode = !automode);
         $autoplay.css({ background: automode ? 'RoyalBlue' : 'LimeGreen' });
-        console.log(`AutoMode: ${automode});
+        console.log(`AutoMode: ${automode}`);
     },
     mouseover: () => $autoplay.css({ color: 'Red' }),
     mouseout: () => $autoplay.css({ color: '' })
