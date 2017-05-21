@@ -352,7 +352,7 @@ $history.on('DOMSubtreeModified',  function() {
      }
      console.log('fire - history');
      word_history.push(trash);
-     db = db.replace(`[${trash}]`, '');
+     db = db.replace('[' + trash + ']', '');
      lasthistory = +new Date();
 });
 
