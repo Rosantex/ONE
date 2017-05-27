@@ -19,7 +19,6 @@ $(function() {
         $timer = $('#timer'),
         $talk = $('#talk');
     
-    // Data
     var D = {
         title: '', round: 0,
         player: [], count: 0,
@@ -35,7 +34,6 @@ $(function() {
         return y ? x + Math.floor(Math.random() * (y - x + 1)) : R(0, x);
     }
     
-    // IMG
     var images = ['img1', 'img2', 'img3', 'img4'].shuffle();
     
     // Class: Player
@@ -246,4 +244,9 @@ $(function() {
                 break;
         }
     };
+    
+    $(window).on('unload', function() {
+        worker.terminate();
+        worker = undefined;
+    });
 }); 
