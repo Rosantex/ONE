@@ -1,0 +1,221 @@
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: ;
+    overflow-y: scroll;
+    background-image: -webkit-linear-gradient(left, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px), -webkit-linear-gradient(#eee .1em, transparent .1em);
+    background-image: linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px), linear-gradient(#eee .1em, transparent .1em);
+    background-size: 100% 1.2em;
+    -webkit-transition: background-color 1s;
+    transition: background-color 1s;
+}
+.player {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    top: 5px;
+    margin: 0 2%;
+    border: 2px solid RoyalBlue;
+    border-radius: 10px;
+    font: bold 0.8em/12px "Indie Flower";
+    text-align: center;
+    word-break: break-all;
+    color: Black;
+    background-repeat: no-repeat;
+    background-position: 5px 5px;
+    background-size: 50px 50px;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+}
+.turn {
+    top: -20px;
+    background-color: #32CD32;
+}
+.die {
+    background-color: Salmon;
+}
+.score {
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    top: 100%;
+    border-radius: 5px;
+    font: 1em/20px Sans-Serif;
+    color: White;
+    background-color: Black;
+}
+.delta {
+    position: absolute;
+    width: 100%;
+    font: bold 0 Monospace;
+    text-align: center;
+    text-shadow: 0px 1px 2px #000033;
+    color: DeepSkyBlue;
+    z-index: 3;
+    -webkit-animation: ScoreMove 2s ease 1;
+            animation: ScoreMove 2s ease 1;
+}
+
+/* Imoticons */
+.img1 {
+    background-image: url('https://raw.githubusercontent.com/Legacy-K/Common/master/molang1.png');
+}
+.img2 {
+    background-image: url('https://raw.githubusercontent.com/Legacy-K/Common/master/molang2.gif');
+}
+.img3 {
+    background-image: url('https://raw.githubusercontent.com/Legacy-K/Common/master/ryan.gif');
+}
+.img4 {
+    background-image: url('https://raw.githubusercontent.com/Legacy-K/Common/master/musi.gif');
+}
+#title {
+    position: absolute;
+    width: 60%;
+    height: 0;
+    padding-bottom: 12.5%;
+    left: 20%;
+    top: 5px;
+    border-radius: 10px;
+    font: bold 1.5em/30px "Ubuntu";
+    text-align: center;
+    letter-spacing: 10px;
+    color: Blue;
+}
+#display {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    left: 0;
+    top: 45px;
+    margin: 0;
+    border: 1px solid;
+    border-radius: 10px;
+    font: 25px/50px "Cairo";
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: White;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+#mission {
+    position: absolute;
+    left: 0;
+    width: 50px;
+    height: 50px;
+    top: 20px;
+    border-radius: 10px;
+    font: bold 1.5em/50px Monospace;
+    text-align: center;
+    color: White;
+    background-color: Coral;
+}
+#chain {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    left: calc(100% - 50px);
+    top: 20px;
+    border-radius: 10px;
+    font: bold 1.5em/50px Monospace;
+    text-align: center;
+    color: White;
+    background-color: LimeGreen;
+}
+#timer {
+    position: absolute;
+    width: 96%;
+    height: 0;
+    left: 2%;
+    top: 105px;
+    padding-bottom: 1.5%;
+    border-radius: 4px;
+    background-color: Red;
+}
+#stage {
+    position: absolute;
+    width: 100%;
+    height: 0;
+    left: 0;
+    top: 170px;
+    padding-bottom: 20%;
+    text-align: center;
+}
+#start {
+    position: absolute;
+    width: 15%;
+    height: auto;
+    left: 42.5%;
+    top: 150px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 10px;
+    background-color: DodgerBlue;
+    cursor: pointer;
+}
+#talk {
+    position: absolute;
+    width: 70%;
+    left: 15%;
+    top: 125px;
+    padding-left: 0.25em;
+    border: 1px solid;
+    border-radius: 6px;
+    font: bold 1em Sans-Serif;
+    outline: none;
+    cursor: text;
+}
+#guide {
+    position: absolute;
+    width: 260px;
+    height: auto;
+    left: calc(50% - 130px);
+    top: 300px;
+    border: 1px Solid Blue;
+    border-radius: 10px;
+    text-align: Sans-Serif;
+    word-break: break-all;
+}
+#explain {
+    font: 12px/20px Monospace;
+}
+#explain b {
+    color: Coral;
+}
+@-webkit-keyframes ScoreMove {
+    0% {
+        margin-top: -80px;
+        font-size: 13px;
+        opacity: 1;
+    }
+    10% {
+        margin-top: -95px;
+        font-size: 20px;
+        opacity: 0.95;
+    }
+    100% {
+        margin-top: -25px;
+        font-size: 9px;
+        opacity: 0.1;
+    }
+}
+@keyframes ScoreMove {
+    0% {
+        margin-top: -80px;
+        font-size: 13px;
+        opacity: 1;
+    }
+    10% {
+        margin-top: -95px;
+        font-size: 20px;
+        opacity: 0.95;
+    }
+    100% {
+        margin-top: -25px;
+        font-size: 9px;
+        opacity: 0.1;
+    }
+} 
