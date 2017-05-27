@@ -19,7 +19,7 @@ $(function() {
         $timer = $('#timer'),
         $talk = $('#talk');
     
-    var D = {
+    var data = {
         title: '', round: 0,
         player: [], count: 0,
         turn: null, lastTurn: null,
@@ -28,10 +28,8 @@ $(function() {
         score: {}
     };
     
-    var T = setTimeout;
-    
-    function R(x, y) {
-        return y ? x + Math.floor(Math.random() * (y - x + 1)) : R(0, x);
+    function random(x, y) {
+        return y ? x + Math.floor(Math.random() * (y - x + 1)) : random(0, x);
     }
     
     var images = ['img1', 'img2', 'img3', 'img4'].shuffle();
@@ -39,10 +37,10 @@ $(function() {
     // Class: Player
     function Player(name) {
         this.name = name;
-        this.idx = D.count;
+        this.idx = data.count;
         this.id = '#' + name;
-        D.player[D.count++] = this;
-        D.score[name] = 0;
+        data.player[data.count++] = this;
+        data.score[name] = 0;
 
         var $player = $('<div id="' + name + '" />').text(name).addClass('player ' + images.pop()),
             $score = $('<div class="score" id="' + name + 'score">0</div>');
@@ -65,7 +63,7 @@ $(function() {
     }
         
     Robot.prototype.go = function() {
-        T(setWord, this.delay, D.word = getWord(D.char), 1);
+        setTimeout(setWord, this.delay, data.word = getWord(data.char), 1);
     };
 
     var robot1 = new Robot('Alpha', 2),
@@ -74,7 +72,7 @@ $(function() {
         user = new User('You');
 
     function isValid(w) {
-        return w[0] === D.char && new RegExp('\\b' + w + '\\b').test(DB);
+        return w[0] === data.char && new RegExp('\\b' + w + '\\b').test(DB);
     }
 
     function vibrate(len) {
@@ -82,9 +80,9 @@ $(function() {
            return;
 
         $stage.css('padding-top', 2 * len);
-        T(function() {
+        setTimeout(function() {
             $stage.css('padding-top', 0);
-            T(vibrate, 50, len * 0.7);
+            setTimeout(vibrate, 50, len * 0.7);
         }, 50);
     }
 
@@ -101,49 +99,49 @@ $(function() {
 
         if (idx < wd.length) {
             var ch = wd[idx++];
-            $display.append(ch === D.mission ? '<label style="color: #66FF66;">' + ch + '</label>' : ch);
-            T(setWord, (800 - 7 * D.chain) / D.word.length, wd, idx);
+            $display.append(ch === data.mission ? '<label style="color: #66FF66;">' + ch + '</label>' : ch);
+            setTimeout(setWord, (800 - 7 * data.chain) / data.word.length, wd, idx);
         } else {
-            T(function() {
+            setTimeout(function() {
                 setMission();
-                $display.text(D.char = wd.slice(-1));
+                $display.text(data.char = wd.slice(-1));
 
-                T(turnStart, 500 - 5 * D.chain);
-            }, 400 - 4 * D.chain);
+                setTimeout(turnStart, 500 - 5 * data.chain);
+            }, 400 - 4 * data.chain);
         }
     }
 
     function setTitle() {
-        D.round = 0;
-        $title.text(D.title = getWord(String.fromCharCode(97 + R(25)), R(2, 2)));
+        data.round = 0;
+        $title.text(data.title = getWord(String.fromCharCode(97 + random(25)), random(3, 5)));
     }
 
     function setRound() {
-        if (D.round >= D.title.length) 
+        if (data.round >= data.title.length) 
             return gameEnd();
 
-        D.turn = D.turn || D.player[0];
-        $(D.turn.id).removeClass('turn die');
-        $display.text(D.char = D.title[D.round++]);
-        $chain.text(D.chain = 0);
+        data.turn = data.turn || data.player[0];
+        $(data.turn.id).removeClass('turn die');
+        $display.text(data.char = data.title[data.round++]);
+        $chain.text(data.chain = 0);
         setMission();
-        T(turnStart, 1000);
+        setTimeout(turnStart, 1000);
     }
 
     function setMission() {
-        if (D.word.indexOf(D.mission) !== -1) 
-            $mission.text(D.mission = String.fromCharCode(97 + R(25)));
+        if (data.word.indexOf(data.mission) !== -1) 
+            $mission.text(data.mission = String.fromCharCode(97 + random(25)));
     }
 
     function setScore(c) {
-        var s = D.score[D.turn.name],
+        var s = data.score[data.turn.name],
             sc = 0,
-            $sc = $(D.turn.id + 'score');
+            $sc = $(data.turn.id + 'score');
 
         switch (c) {
             case 'new-game':
-                $.each(D.score, function(player, score) {
-                    D.score[player] = 0
+                $.each(data.score, function(player, score) {
+                    data.score[player] = 0
                 });
                 $('.score').text(0);
                 return;
@@ -151,17 +149,17 @@ $(function() {
                 sc = Math.floor(s * -0.3);
                 break;
             case 'turn-end':
-                var w = D.word,
-                    m = w.split(D.mission).length - 1;
-                sc += w.length * R(10, 20);
+                var w = data.word,
+                    m = w.split(data.mission).length - 1;
+                sc += w.length * random(10, 20);
 
                 while (--m > 0)
-                    sc += R(10, 99);
+                    sc += random(10, 99);
                 
                 break;
         }
 
-        $(D.turn.id).append($('<div>')
+        $(data.turn.id).append($('<div>')
             .css($sc.position())
             .text((c !== 'time-over' ? '+' : '') + sc)
             .addClass('delta'));
@@ -176,43 +174,43 @@ $(function() {
             }
         });
 
-        D.score[D.turn.name] = s + sc;
+        data.score[data.turn.name] = s + sc;
     }
 
     function timeStart() {
         $timer.width('').animate({
             width: 0
-        }, 10000 - 100 * D.chain, timeEnd);
+        }, 10000 - 100 * data.chain, timeEnd);
     }
 
     function timeEnd() {
-        $(D.turn.id).addClass('die');
+        $(data.turn.id).addClass('die');
         setScore('time-over');
-        T(setRound, 2000);
+        setTimeout(setRound, 2000);
     }
 
     function turnStart() {
         $('.delta').remove();
-        if ($(D.turn.id).hasClass('die') || D.lastTurn && $(D.lastTurn.id).hasClass('die'))
+        if ($(data.turn.id).hasClass('die') || data.lastTurn && $(data.lastTurn.id).hasClass('die'))
             return;
 
-        $(D.turn.id).addClass('turn');
+        $(data.turn.id).addClass('turn');
         timeStart();
-        D.turn instanceof Robot ? D.turn.go() : $talk.focus();
+        data.turn instanceof Robot ? data.turn.go() : $talk.focus();
     }
 
     function turnEnd() {
         $timer.stop(true);
-        $chain.text(++D.chain);
+        $chain.text(++data.chain);
         setScore('turn-end');
-        $(D.turn.id).removeClass('turn');
-        D.lastTurn = D.turn;
-        D.turn = D.player[(D.turn.idx + 1) % D.count];
+        $(data.turn.id).removeClass('turn');
+        data.lastTurn = data.turn;
+        data.turn = data.player[(data.turn.idx + 1) % data.count];
     }
 
     function gameStart() {
         $start.hide();
-        if (D.lastTurn) 
+        if (data.lastTurn) 
             setScore('new-game');
 
         setTitle();
@@ -237,8 +235,8 @@ $(function() {
         switch(msg) {
             case 'talk':
                 var input = $talk.val();
-                if (D.turn === user && !$(user.id).hasClass('die') && isValid(input)) 
-                setWord(D.word = input, 1);
+                if (data.turn === user && !$(user.id).hasClass('die') && isValid(input)) 
+                setWord(data.word = input, 1);
                 
                 $talk.val('').focus();
                 break;
@@ -249,4 +247,4 @@ $(function() {
         worker.terminate();
         worker = undefined;
     });
-}); 
+});
