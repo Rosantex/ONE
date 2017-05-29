@@ -222,9 +222,10 @@ $(function() {
     }
     
     function setRank() {
-        var p, i = 0, pv = -1, len = 4,
+        var i = 0, pv = -1, len = 4,
             rank = {},   
-            res = [];
+            res = [],
+            idx, p;
         
         res = Object._entries(data.score).sort(function(x, y) {
             return y[1] - x[1];
@@ -235,8 +236,10 @@ $(function() {
             pv = res[i][1];        
         }
     
-        for (p in data.player)
-            console.log(rank[p]);
+        for (idx in data.player) {
+            p = player[idx]
+            $(p.id).css('top', -10 * (data.count - rank[p]));
+        }
     }
 
     function gameEnd() {
