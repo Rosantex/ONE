@@ -10,7 +10,7 @@ $(function() {
         async: false
     }).responseText;
 
-    var ROBOT_START_DELAY = [2000, 1500, 1000, 500, 50];
+    var ROBOT_START_DELAY = [4000, 3000, 2000, 1000, 500];
 
     var $stage = $('#stage'),
         $start = $('#start'),
@@ -71,53 +71,21 @@ $(function() {
     };
 
     var robot1 = new Robot('Alpha', 2),
-        robot2 = new Robot('Beta', 3),
-        robot3 = new Robot('Gamma', 4),
+        robot2 = new Robot('Beta', 1),
+        robot3 = new Robot('Gamma', 2),
         user = new User('You');
-
-    function isValid(w) {
-        return w[0] === data.char && new RegExp('\\b' + w + '\\b').test(DB);
-    }
-
-    function vibrate(magnitude) {
-        if (magnitude < 1)
-            return;
-
-        $stage.css('padding-top', 2 * magnitude);
-        setTimeout(function() {
-            $stage.css('padding-top', 0);
-            setTimeout(vibrate, 50, magnitude * 0.7);
-        }, 50);
-    }
 
     function getWord(chr, len) {
         var res = DB.match(new RegExp('\\b' + chr + '.' + (len ? '{' + (len - chr.length) + '}' : '+') + '\\b', 'g'));
         return res.random();
-    }
-
-    function setWord(wd, idx) {
-        if (idx === 1) {
-            turnEnd();
-            vibrate(wd.length);
-        }
-
-        if (idx < wd.length) {
-            var ch = wd[idx++];
-            $display.append(ch === data.mission ? '<label style="color: #66FF66;">' + ch + '</label>' : ch);
-            setTimeout(setWord, (800 - 7 * data.chain) / data.word.length, wd, idx);
-        } else {
-            setTimeout(function() {
-                setMission();
-                $display.text(data.char = wd.slice(-1));
-
-                setTimeout(turnStart, 500 - 5 * data.chain);
-            }, 400 - 4 * data.chain);
-        }
-    }
+    }    
 
     function setTitle() {
+        if (data.lastTurn)
+            setScore('new-game');
+            
         data.round = 0;
-        $title.text(data.title = getWord(String.fromCharCode(97 + random(25)), random(3, 5)));
+        $title.text(data.title = getWord(String.fromCharCode(97 + random(25)), random(3, 4)));
     }
 
     function setRound() {
@@ -180,6 +148,59 @@ $(function() {
 
         data.score[data.turn.name] = s + sc;
     }
+    
+    function setWord(wd, idx) {
+        if (idx === 1) {
+            turnEnd();
+            setQuake(wd.length);
+        }
+
+        if (idx < wd.length) {
+            var ch = wd[idx++];
+            $display.append(ch === data.mission ? '<label style="color: #66FF66;">' + ch + '</label>' : ch);
+            setTimeout(setWord, (800 - 7 * data.chain) / data.word.length, wd, idx);
+        } else {
+            setTimeout(function() {
+                setMission();
+                $display.text(data.char = wd.slice(-1));
+
+                setTimeout(turnStart, 500 - 5 * data.chain);
+            }, 400 - 4 * data.chain);
+        }
+    }
+    
+    function setQuake(pow) {
+        if (pow < 1)
+            return;
+
+        $stage.css('padding-top', 2 * pow);
+        setTimeout(function() {
+            $stage.css('padding-top', 0);
+            setTimeout(setQuake, 50, pow * 0.7);
+        }, 50);
+    }
+    
+    function setRank() {
+        var i = 0, pv = -1, 
+            len = data.count,
+            rank = {},   
+            res = [],
+            idx, p;
+        
+        res = Object._entries(data.score).sort(function(x, y) {
+            return y[1] - x[1];
+        });
+    
+        for (; i < len; i++) {
+            rank[res[i][0]] = res[i][1] === pv ? rank[res[i - 1][0]] : i;
+            pv = res[i][1];
+        }
+    
+        for (idx in data.player) {
+            p = data.player[idx];
+            $(p.id).css('top', -10 * (data.count - rank[p.name]));
+        }
+    }
 
     function timeStart() {
         $timer.width('').animate({
@@ -214,32 +235,8 @@ $(function() {
 
     function gameStart() {
         $start.hide();
-        if (data.lastTurn)
-            setScore('new-game');
-
         setTitle();
         setRound();
-    }
-    
-    function setRank() {
-        var i = 0, pv = -1, len = 4,
-            rank = {},   
-            res = [],
-            idx, p;
-        
-        res = Object._entries(data.score).sort(function(x, y) {
-            return y[1] - x[1];
-        });
-    
-        for (; i < len; i++ ) {
-            rank[res[i][0]] = res[i][1] === pv ? rank[res[i - 1][0]] : i;
-            pv = res[i][1];        
-        }
-    
-        for (idx in data.player) {
-            p = player[idx]
-            $(p.id).css('top', -10 * (data.count - rank[p]));
-        }
     }
 
     function gameEnd() {
@@ -252,11 +249,11 @@ $(function() {
 
         switch (msg) {
             case 'talk':
-                var input = $talk.val();
-                if (data.turn === user && !$(user.id).hasClass('die') && isValid(input))
-                    setWord(data.word = input, 1);
+                var wd = $talk.val();
+                if (data.turn === user && !$(user.id).hasClass('die') && wd.charAt(0) === data.char && new RegExp('\\b' + wd + '\\b').test(DB))
+                    setWord(data.word = wd, 1);
 
-                $talk.val('').focus();
+                $talk.val('');
                 break;
         }
     };
@@ -272,4 +269,5 @@ $(function() {
         worker.terminate();
         worker = undefined;
     });
-})
+    
+});
