@@ -68,13 +68,13 @@ $('#BgImg').css({
 
 $('#DictionaryBtn')
     .off('click')  
-    .on('click', function() { $("#ReplayBtn").click(); })
+    .on('click', e => $("#ReplayBtn").click())
     .click();
  
 $('.jjo-turn-time').attr('id', 'ROS_Time');
  
 let $dsp = isMobile ? $('div.jjo-display') : $('.jjo-display'),
-    $talk = isMobile ? $('#game-input') : $('#Talk'),
+    $talk = $('[id^=UserMessage]'), //  isMobile ? $('#game-input') : $('#Talk'),
     $take = $('#ChatBtn'),
     $turn = $('.game-input'),
     $time = document.getElementById('ROS_Time'),
@@ -109,7 +109,6 @@ let observer = new WebKitMutationObserver(function(mutations) {
 let config = { attributes: false, childList: true, subtree: true };
     
 const KEYNAME = { 
-
     8: "BackSpace", 
     9: "Tab", 
     12: "Form Feed",
@@ -173,11 +172,9 @@ const KEYNAME = {
     222: "Apostrophe(')",
     225: "RCtrl", 
     229: "RAlt" 
-    
 };
 
 const IMG = [
-
     'http://www.planwallpaper.com/static/images/53823.jpg',
     'https://wallpaperbrowse.com/media/images/cool-wallpaper-2.jpg',
     'https://wallpaperbrowse.com/media/images/cool-pictures-24.jpg',
@@ -195,11 +192,9 @@ const IMG = [
     'http://www.planwallpaper.com/static/images/Axent-Wear-Cat-Ear-Headphones-a-Cool-Cat-Ear.jpg',
     'http://www.planwallpaper.com/static/images/7004205-cool-black-backgrounds-27640_lhK8IKI.jpg',
     'http://coolwallpaper.website/wp-content/uploads/2016/11/Nice-Really-Cool-Wallpaper-Free-download-best-Latest-3D-HD-desktop-wallpapers-background-Wide-Most-Popular-Images-in-high-quality-resolutions-big-lounge-sofa.jpg'
-
 ];
 
 const GAMEMODE = { 
-
     '한국어 끝말잇기': 'KSH', 
     '한국어 쿵쿵따': 'KKT', 
     '한국어 앞말잇기': 'KAP', 
@@ -214,7 +209,6 @@ const GAMEMODE = {
     '영어 타자 대결': 'ETY', 
     '영어 단어 대결': 'EDA', 
     '영어 솎솎': 'ESS'
-
 };
 
 let PLAY = {
@@ -318,15 +312,18 @@ let PLAY = {
     
 };
 
+readUrl('En').then(res => en = res);
+readUrl('Ko.txt').then(res => ko = res);
+
 $round.on('DOMSubtreeModified', () => {
-    if (+new Date() - lastupdate < 5555) return; 
+    if (+new Date() - lastupdate < 5555) return false;
 
     opts = $('h5.room-head-mode').html().split(' / ');
-    if (!opts) return;
+    if (!opts) return false;
     
     mode = GAMEMODE[opts.splice(0, 1)];
-    db = /E../.test(mode) ? (en || (en = readUrl('En'))) : (ko || (ko = readUrl('Ko.txt')));
-    console.log(`[New Game]\nmode: ${mode}\nopts: ${opts} \n  `);
+    db = /E../.test(mode) ? en : ko;
+ //   console.log(`[New Game]\nmode: ${mode}\nopts: ${opts} \n  `);
     lastupdate = +new Date();
     playing = false;
     changeImage();
@@ -336,21 +333,21 @@ $autoplay.on({
     click: () => { 
         control_AI(automode = !automode);
         $autoplay.css({ background: automode ? 'RoyalBlue' : 'LimeGreen' });
-        console.log(`AutoMode: ${automode}`);
+    //    console.log(`AutoMode: ${automode}`);
     },
     mouseover: () => $autoplay.css({ color: 'Red' }),
     mouseout: () => $autoplay.css({ color: '' })
 });
 
 $history.on('DOMSubtreeModified',  function() {
-     if (+new Date() - lasthistory < 150) return;
+     if (+new Date() - lasthistory < 150) return false;
 
      let stuff, trash;
      if (!(stuff = $(this).html()) || word_history.includes(trash = stuff.split('<')[1].split('>')[1])) {
           lasthistory = +new Date();
-          return;
+          return false;
      }
-     console.log('fire - history');
+//     console.log('fire - history');
      word_history.push(trash);
      db = db.replace('[' + trash + ']', '');
      lasthistory = +new Date();
@@ -358,9 +355,7 @@ $history.on('DOMSubtreeModified',  function() {
 
 $setkey.on({ 
     keydown: function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        if (setlock) return;
+        if (setlock) return false;
 
 	key = e.keyCode;
         $(this).val(KEYNAME[key] || String.fromCharCode(key));
@@ -375,23 +370,23 @@ $setkey.on({
 
 $sethotkey.on({
     click: () => {
-        if (setlock) return;
+        if (setlock) return false;
 
         hotkey = key;
         $setkey.css({ background: 'Pink' });
         setlock = true;
-        console.log('Hotkey Modified: ' + (KEYNAME[key] || String.fromCharCode(key)));
+     //   console.log('Hotkey Modified: ' + (KEYNAME[key] || String.fromCharCode(key)));
     },
     mouseover: () => $sethotkey.css({ color: 'Red' }),
     mouseout: () => $sethotkey.css({ color: '' })
 });
 
 $(window).on('keydown', e => {
-    if (e.keyCode === hotkey && ($turn.is(':visible') || /(K|E)SS/.test(mode))) {
+    if (e.keyCode === hotkey && ($turn.is(':visible') || /(?:K|E)SS/.test(mode))) {
         e.preventDefault();
         var start = +new Date();
         PLAY[mode]();
-        console.log(+new Date() - start);
+     //   console.log(+new Date() - start);
     }
 });
 
@@ -400,14 +395,14 @@ control_AI = plug => plug ? observer.observe($time, config) : observer.disconnec
 execute_AI = mutation => {
      if ($turn.is(':visible')) {
           control_AI(false);
-          console.log('mutate');
+     //     console.log('mutate');
           PLAY[mode]();
 	  setTimeout(() => control_AI, 100, true);
      }
 };
 
 transmit = (msg, erase, memo) => {
-    if ($turn.is(':visible') || /(K|E)SS/.test(mode)) {
+    if ($turn.is(':visible') || /(?:K|E)SS/.test(mode)) {
         $talk.val(msg);
 	$take.click();
         if (erase) db = db.replace(erase, '');
@@ -439,8 +434,5 @@ shuffle = deck => {
 };
 
 readUrl = url => { 
-    return $.ajax({ 
-	url: `https://raw.githubusercontent.com/Rosantex/my/master/${url}`, 
-	async: false
-    }).responseText;
+    return $.ajax(`https://raw.githubusercontent.com/Rosantex/my/master/${url}`);
 };
