@@ -4,7 +4,7 @@ $(function() {
     var worker = new Worker(URL.createObjectURL(blob));
    
     var DB = $.ajax({
-        url: 'https://raw.githubusercontent.com/Legacy-K/common/master/En.txt',
+        url: 'https://raw.githubusercontent.com/Rosantex/ONE/master/En',
         async: false
     }).responseText;
 
